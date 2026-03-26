@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quanto imposto você realmente paga? — Imposto Real</title>
+  <meta name="description" content="Descubra uma forma alternativa de calcular o imposto que você paga. Veja o peso real dos tributos sob outra perspectiva.">
+  <meta name="theme-color" content="#f9f9f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f9f9f9;
+      --text: #111;
+      --text-secondary: #666;
+      --accent: #ff3b30;
+      --card-bg: #fff;
+      --card-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      --input-bg: #fff;
+      --input-border: #ddd;
+      --input-focus: #ff3b30;
+      --bar-bg: #eee;
+      --divider: #e5e5e5;
+      --button-bg: #111;
+      --button-text: #fff;
+      --button-secondary-bg: transparent;
+      --button-secondary-border: #ddd;
+      --button-secondary-text: #111;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0b0b;
+      --text: #f5f5f5;
+      --text-secondary: #999;
+      --accent: #ff453a;
+      --card-bg: #1c1c1e;
+      --card-shadow: 0 2px 16px rgba(0,0,0,0.3);
+      --input-bg: #2c2c2e;
+      --input-border: #3a3a3c;
+      --input-focus: #ff453a;
+      --bar-bg: #2c2c2e;
+      --divider: #2c2c2e;
+      --button-bg: #f5f5f5;
+      --button-text: #111;
+      --button-secondary-bg: transparent;
+      --button-secondary-border: #3a3a3c;
+      --button-secondary-text: #f5f5f5;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-top: 12px;
+    }
+
+    .logo {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text);
+    }
+
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* Form */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .field label .optional {
+      font-weight: 400;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px;
+      color: var(--text-secondary);
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px;
+      color: var(--text-secondary);
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 17px;
+      font-family: inherit;
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      background: var(--input-bg);
+      color: var(--text);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.12);
+    }
+
+    input.has-prefix {
+      padding-left: 44px;
+    }
+
+    input.has-suffix {
+      padding-right: 36px;
+    }
+
+    .field-error {
+      font-size: 13px;
+      color: var(--accent);
+      margin-top: 6px;
+      min-height: 20px;
+      transition: opacity 0.2s ease;
+    }
+
+    input.invalid {
+      border-color: var(--accent);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 17px;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease;
+      -webkit-appearance: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--button-bg);
+      color: var(--button-text);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .btn-secondary {
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      border: 1.5px solid var(--button-secondary-border);
+      font-size: 15px;
+      padding: 12px 20px;
+    }
+
+    .btn-secondary:hover {
+      opacity: 0.7;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-row .btn {
+      flex: 1;
+    }
+
+    /* Results */
+    .results {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
+    }
+
+    .results.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result-value {
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .result-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .result-number {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.1;
+    }
+
+    .result-number.accent {
+      color: var(--accent);
+    }
+
+    .result-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .result-divider {
+      height: 1px;
+      background: var(--divider);
+      margin: 20px 0;
+    }
+
+    /* Comparison bars */
+    .comparison {
+      margin-top: 8px;
+    }
+
+    .comparison-item {
+      margin-bottom: 20px;
+    }
+
+    .comparison-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .comparison-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .comparison-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .comparison-value {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .comparison-value.accent {
+      color: var(--accent);
+      font-size: 24px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      background: var(--bar-bg);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0;
+    }
+
+    .bar-fill.nota {
+      background: var(--text-secondary);
+    }
+
+    .bar-fill.real {
+      background: var(--accent);
+    }
+
+    /* Explanation */
+    .explanation {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .explanation p {
+      margin-bottom: 12px;
+    }
+
+    .explanation p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Share section */
+    .share-section {
+      text-align: center;
+    }
+
+    .share-section .card-title {
+      text-align: center;
+    }
+
+    /* Canvas preview */
+    .canvas-preview {
+      display: none;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .canvas-preview img {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 0 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: underline;
+      text-decoration-color: var(--divider);
+      text-underline-offset: 2px;
+    }
+
+    /* Feedback toast */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--button-bg);
+      color: var(--button-text);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    /* Focus visible */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px 16px 48px;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .card {
+        padding: 24px 20px;
+        border-radius: 14px;
+      }
+
+      .result-number {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="logo">Imposto Real</span>
+    </header>
+
+    <section class="hero fade-in">
+      <h1>Quanto imposto você realmente paga?</h1>
+      <p>Descubra uma forma alternativa de visualizar o peso dos tributos no seu bolso.</p>
+    </section>
+
+    <!-- Input Card -->
+    <div class="card fade-in" style="animation-delay: 0.1s">
+      <div class="card-title">Dados da nota fiscal</div>
+      <form id="taxForm" novalidate>
+        <div class="field">
+          <label for="totalInput">Valor total pago</label>
+          <div class="input-wrapper">
+            <span class="input-prefix">R$</span>
+            <input type="text" id="totalInput" class="has-prefix" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-required="true">
+          </div>
+          <div class="field-error" id="totalError" role="alert"></div>
+        </div>
+        <div class="field">
+          <label for="taxInput">Valor de impostos</label>
+          <div class="input-wrapper">
+            <span class="input-prefix">R$</span>
+            <input type="text" id="taxInput" class="has-prefix" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-required="true">
+          </div>
+          <div class="field-error" id="taxError" role="alert"></div>
+        </div>
+        <div class="field">
+          <label for="notePercInput">Percentual informado na nota <span class="optional">(opcional)</span></label>
+          <div class="input-wrapper">
+            <input type="text" id="notePercInput" class="has-suffix" inputmode="decimal" placeholder="Ex: 49" autocomplete="off">
+            <span class="input-suffix">%</span>
+          </div>
+          <div class="field-error" id="notePercError" role="alert"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="calcBtn">Calcular</button>
+      </form>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+      <!-- Main result -->
+      <div class="card">
+        <div class="card-title">Resultado</div>
+        <div class="result-value">
+          <div class="result-label">Valor real do produto (sem impostos)</div>
+          <div class="result-number" id="realValue">—</div>
+        </div>
+        <div class="result-divider"></div>
+        <div class="comparison">
+          <div class="comparison-item">
+            <div class="comparison-header">
+              <span class="comparison-label">Nota fiscal</span>
+              <span class="comparison-value" id="notePercResult">—</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill nota" id="barNota"></div>
+            </div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-header">
+              <span class="comparison-label">Cálculo alternativo</span>
+              <span class="comparison-value accent" id="realPercResult">—</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill real" id="barReal"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explanation -->
+      <div class="card">
+        <div class="card-title">Entenda</div>
+        <div class="explanation">
+          <p>Quando você compra um produto, o imposto já está incluído no preço final.</p>
+          <p>A nota fiscal mostra o imposto como porcentagem desse valor total.</p>
+          <p>Mas se removermos os impostos, conseguimos ver quanto o produto realmente custa sem tributos.</p>
+          <p>Ao comparar o imposto com esse valor, o percentual é muito maior.</p>
+          <p><strong>Essa é uma forma alternativa de entender o impacto dos tributos.</strong></p>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div class="card share-section">
+        <div class="card-title">Compartilhar</div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" id="copyLinkBtn" aria-label="Copiar link de compartilhamento">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copiar link
+          </button>
+          <button type="button" class="btn btn-secondary" id="shareImageBtn" aria-label="Gerar e copiar imagem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Gerar imagem
+          </button>
+        </div>
+        <div class="canvas-preview" id="canvasPreview">
+          <img id="previewImg" alt="Imagem de compartilhamento do resultado">
+          <div class="btn-row" style="margin-top:12px">
+            <button type="button" class="btn btn-secondary" id="copyImageBtn">Copiar imagem</button>
+            <button type="button" class="btn btn-secondary" id="downloadImageBtn">Baixar PNG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Uma ferramenta educacional sobre tributos no Brasil.</p>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Off-screen canvas -->
+  <canvas id="shareCanvas" width="1080" height="1080" style="display:none" aria-hidden="true"></canvas>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ─── Theme ───
+      const root = document.documentElement;
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+      }
+
+      applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      });
+
+      // ─── Currency mask ───
+      function parseCurrency(str) {
+        if (!str) return 0;
+        var cleaned = str.replace(/[^\d,]/g, '').replace(',', '.');
+        return parseFloat(cleaned) || 0;
+      }
+
+      function formatCurrency(value) {
+        return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function applyCurrencyMask(input) {
+        input.addEventListener('input', function () {
+          var raw = input.value.replace(/\D/g, '');
+          if (!raw) { input.value = ''; return; }
+          var num = parseInt(raw, 10) / 100;
+          input.value = formatCurrency(num);
+        });
+      }
+
+      function applyPercentMask(input) {
+        input.addEventListener('input', function () {
+          var raw = input.value.replace(/[^\d,\.]/g, '');
+          input.value = raw;
+        });
+      }
+
+      var totalInput = document.getElementById('totalInput');
+      var taxInput = document.getElementById('taxInput');
+      var notePercInput = document.getElementById('notePercInput');
+
+      applyCurrencyMask(totalInput);
+      applyCurrencyMask(taxInput);
+      applyPercentMask(notePercInput);
+
+      // ─── Validation ───
+      function validate() {
+        var valid = true;
+        var totalVal = parseCurrency(totalInput.value);
+        var taxVal = parseCurrency(taxInput.value);
+        var notePercVal = notePercInput.value.replace(',', '.');
+        notePercVal = notePercVal ? parseFloat(notePercVal) : null;
+
+        var totalError = document.getElementById('totalError');
+        var taxError = document.getElementById('taxError');
+        var notePercError = document.getElementById('notePercError');
+
+        // Reset
+        totalInput.classList.remove('invalid');
+        taxInput.classList.remove('invalid');
+        notePercInput.classList.remove('invalid');
+        totalError.textContent = '';
+        taxError.textContent = '';
+        notePercError.textContent = '';
+
+        if (!totalInput.value || totalVal <= 0) {
+          totalInput.classList.add('invalid');
+          totalError.textContent = 'Informe o valor total pago.';
+          valid = false;
+        }
+
+        if (!taxInput.value || taxVal <= 0) {
+          taxInput.classList.add('invalid');
+          taxError.textContent = 'Informe o valor dos impostos.';
+          valid = false;
+        }
+
+        if (valid && taxVal >= totalVal) {
+          taxInput.classList.add('invalid');
+          taxError.textContent = 'O imposto deve ser menor que o valor total.';
+          valid = false;
+        }
+
+        if (notePercVal !== null && (notePercVal < 0 || notePercVal > 100)) {
+          notePercInput.classList.add('invalid');
+          notePercError.textContent = 'Informe um percentual entre 0 e 100.';
+          valid = false;
+        }
+
+        return valid ? { total: totalVal, tax: taxVal, notePerc: notePercVal } : null;
+      }
+
+      // ─── Animate count ───
+      function animateCount(el, target, prefix, suffix, duration) {
+        prefix = prefix || '';
+        suffix = suffix || '';
+        duration = duration || 800;
+        var start = 0;
+        var startTime = null;
+
+        function step(ts) {
+          if (!startTime) startTime = ts;
+          var progress = Math.min((ts - startTime) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = start + (target - eased * (start - target) + eased * target - start);
+          current = eased * target;
+
+          if (prefix === 'R$ ') {
+            el.textContent = prefix + formatCurrency(current);
+          } else {
+            el.textContent = prefix + current.toFixed(1).replace('.', ',') + suffix;
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            if (prefix === 'R$ ') {
+              el.textContent = prefix + formatCurrency(target);
+            } else {
+              el.textContent = prefix + target.toFixed(1).replace('.', ',') + suffix;
+            }
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      // ─── Calculate ───
+      var resultsEl = document.getElementById('results');
+      var lastResult = null;
+
+      function calculate(data) {
+        var realValue = data.total - data.tax;
+        var realPerc = (data.tax / realValue) * 100;
+        var notePerc = data.notePerc !== null ? data.notePerc : (data.tax / data.total) * 100;
+
+        lastResult = {
+          total: data.total,
+          tax: data.tax,
+          realValue: realValue,
+          realPerc: realPerc,
+          notePerc: notePerc
+        };
+
+        // Show results
+        resultsEl.classList.add('visible');
+
+        // Animate numbers
+        var realValueEl = document.getElementById('realValue');
+        var notePercResultEl = document.getElementById('notePercResult');
+        var realPercResultEl = document.getElementById('realPercResult');
+
+        animateCount(realValueEl, realValue, 'R$ ', '', 900);
+        animateCount(notePercResultEl, notePerc, '', '%', 700);
+        animateCount(realPercResultEl, realPerc, '', '%', 1000);
+
+        // Animate bars
+        var barMax = Math.max(realPerc, 100);
+        var barNota = document.getElementById('barNota');
+        var barReal = document.getElementById('barReal');
+
+        // Reset bars
+        barNota.style.width = '0';
+        barReal.style.width = '0';
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            barNota.style.width = Math.min((notePerc / barMax) * 100, 100) + '%';
+            barReal.style.width = Math.min((realPerc / barMax) * 100, 100) + '%';
+          });
+        });
+
+        // Update URL
+        updateURL(data.total, data.tax);
+
+        // Scroll to results
+        setTimeout(function () {
+          resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+
+      // ─── Form submit ───
+      document.getElementById('taxForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var data = validate();
+        if (data) calculate(data);
+      });
+
+      // ─── URL params ───
+      function updateURL(total, tax) {
+        var params = new URLSearchParams();
+        params.set('total', total.toString());
+        params.set('tax', tax.toString());
+        var newURL = window.location.pathname + '?' + params.toString();
+        history.replaceState(null, '', newURL);
+      }
+
+      function loadFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        var total = parseFloat(params.get('total'));
+        var tax = parseFloat(params.get('tax'));
+
+        if (total > 0 && tax > 0 && tax < total) {
+          totalInput.value = formatCurrency(total);
+          taxInput.value = formatCurrency(tax);
+
+          setTimeout(function () {
+            calculate({ total: total, tax: tax, notePerc: null });
+          }, 300);
+        }
+      }
+
+      loadFromURL();
+
+      // ─── Toast ───
+      var toastEl = document.getElementById('toast');
+      var toastTimer = null;
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          toastEl.classList.remove('show');
+        }, 2200);
+      }
+
+      // ─── Copy link ───
+      document.getElementById('copyLinkBtn').addEventListener('click', function () {
+        if (!lastResult) return;
+        var url = window.location.href;
+        navigator.clipboard.writeText(url).then(function () {
+          showToast('Link copiado!');
+        }).catch(function () {
+          showToast('Não foi possível copiar.');
+        });
+      });
+
+      // ─── Generate image ───
+      function generateImage() {
+        if (!lastResult) return null;
+
+        var canvas = document.getElementById('shareCanvas');
+        var ctx = canvas.getContext('2d');
+        var w = canvas.width;
+        var h = canvas.height;
+        var isDark = root.getAttribute('data-theme') === 'dark';
+
+        // Background
+        ctx.fillStyle = isDark ? '#0b0b0b' : '#f9f9f9';
+        ctx.fillRect(0, 0, w, h);
+
+        // Card
+        var cardX = 60, cardY = 80, cardW = w - 120, cardH = h - 160;
+        var radius = 32;
+        ctx.fillStyle = isDark ? '#1c1c1e' : '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(cardX + radius, cardY);
+        ctx.lineTo(cardX + cardW - radius, cardY);
+        ctx.quadraticCurveTo(cardX + cardW, cardY, cardX + cardW, cardY + radius);
+        ctx.lineTo(cardX + cardW, cardY + cardH - radius);
+        ctx.quadraticCurveTo(cardX + cardW, cardY + cardH, cardX + cardW - radius, cardY + cardH);
+        ctx.lineTo(cardX + radius, cardY + cardH);
+        ctx.quadraticCurveTo(cardX, cardY + cardH, cardX, cardY + cardH - radius);
+        ctx.lineTo(cardX, cardY + radius);
+        ctx.quadraticCurveTo(cardX, cardY, cardX + radius, cardY);
+        ctx.closePath();
+        ctx.fill();
+
+        if (!isDark) {
+          ctx.shadowColor = 'rgba(0,0,0,0.06)';
+          ctx.shadowBlur = 32;
+          ctx.fill();
+          ctx.shadowColor = 'transparent';
+        }
+
+        var cx = w / 2;
+
+        // Title
+        ctx.fillStyle = isDark ? '#f5f5f5' : '#111';
+        ctx.font = '700 42px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Quanto imposto você', cx, cardY + 100);
+        ctx.fillText('realmente paga?', cx, cardY + 152);
+
+        // Divider
+        ctx.strokeStyle = isDark ? '#2c2c2e' : '#e5e5e5';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cardX + 60, cardY + 200);
+        ctx.lineTo(cardX + cardW - 60, cardY + 200);
+        ctx.stroke();
+
+        // Nota fiscal percentage
+        ctx.fillStyle = isDark ? '#999' : '#666';
+        ctx.font = '600 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('NOTA FISCAL', cx, cardY + 270);
+
+        ctx.fillStyle = isDark ? '#f5f5f5' : '#111';
+        ctx.font = '700 80px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(lastResult.notePerc.toFixed(1).replace('.', ',') + '%', cx, cardY + 370);
+
+        // Bar nota
+        var barY1 = cardY + 400;
+        var barW = cardW - 160;
+        var barH = 20;
+        var barX = cardX + 80;
+        var barMax = Math.max(lastResult.realPerc, 100);
+
+        ctx.fillStyle = isDark ? '#2c2c2e' : '#eee';
+        roundRect(ctx, barX, barY1, barW, barH, 10);
+        ctx.fill();
+
+        ctx.fillStyle = isDark ? '#999' : '#666';
+        roundRect(ctx, barX, barY1, barW * Math.min(lastResult.notePerc / barMax, 1), barH, 10);
+        ctx.fill();
+
+        // VS divider
+        ctx.fillStyle = isDark ? '#999' : '#666';
+        ctx.font = '600 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('VS', cx, barY1 + 72);
+
+        // Real percentage
+        ctx.fillStyle = isDark ? '#999' : '#666';
+        ctx.font = '600 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('CÁLCULO ALTERNATIVO', cx, barY1 + 130);
+
+        var accent = isDark ? '#ff453a' : '#ff3b30';
+        ctx.fillStyle = accent;
+        ctx.font = '700 100px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText(lastResult.realPerc.toFixed(1).replace('.', ',') + '%', cx, barY1 + 250);
+
+        // Bar real
+        var barY2 = barY1 + 275;
+        ctx.fillStyle = isDark ? '#2c2c2e' : '#eee';
+        roundRect(ctx, barX, barY2, barW, barH, 10);
+        ctx.fill();
+
+        ctx.fillStyle = accent;
+        roundRect(ctx, barX, barY2, barW * Math.min(lastResult.realPerc / barMax, 1), barH, 10);
+        ctx.fill();
+
+        // Footer
+        ctx.fillStyle = isDark ? '#666' : '#999';
+        ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('Imposto Real — Uma forma alternativa de visualizar tributos', cx, cardY + cardH - 40);
+
+        return canvas;
+      }
+
+      function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      // ─── Share image button ───
+      var canvasPreview = document.getElementById('canvasPreview');
+      var previewImg = document.getElementById('previewImg');
+
+      document.getElementById('shareImageBtn').addEventListener('click', function () {
+        var canvas = generateImage();
+        if (!canvas) return;
+        var dataURL = canvas.toDataURL('image/png');
+        previewImg.src = dataURL;
+        canvasPreview.style.display = 'block';
+        showToast('Imagem gerada!');
+      });
+
+      // ─── Copy image ───
+      document.getElementById('copyImageBtn').addEventListener('click', function () {
+        var canvas = document.getElementById('shareCanvas');
+        canvas.toBlob(function (blob) {
+          if (!blob) { showToast('Erro ao gerar imagem.'); return; }
+          try {
+            var item = new ClipboardItem({ 'image/png': blob });
+            navigator.clipboard.write([item]).then(function () {
+              showToast('Imagem copiada!');
+            }).catch(function () {
+              showToast('Não foi possível copiar. Use o botão Baixar.');
+            });
+          } catch (e) {
+            showToast('Seu navegador não suporta copiar imagens. Use o botão Baixar.');
+          }
+        }, 'image/png');
+      });
+
+      // ─── Download image ───
+      document.getElementById('downloadImageBtn').addEventListener('click', function () {
+        var canvas = document.getElementById('shareCanvas');
+        var link = document.createElement('a');
+        link.download = 'imposto-real.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('Imagem baixada!');
+      });
+
+    })();
+  </script>
+</body>
+</html>
