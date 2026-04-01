@@ -285,6 +285,7 @@
 
     /* Results */
     .results {
+      display: none;
       opacity: 0;
       transform: translateY(12px);
       transition: opacity 0.5s ease, transform 0.5s ease;
@@ -854,6 +855,8 @@
         };
 
         // Show results
+        resultsEl.style.display = 'block';
+        resultsEl.offsetHeight; // force reflow so CSS transition fires
         resultsEl.classList.add('visible');
 
         // Animate numbers
