@@ -446,19 +446,6 @@
       text-align: center;
     }
 
-    /* Canvas preview */
-    .canvas-preview {
-      display: none;
-      margin-top: 16px;
-      text-align: center;
-    }
-
-    .canvas-preview img {
-      max-width: 100%;
-      border-radius: 12px;
-      box-shadow: var(--card-shadow);
-    }
-
     /* Footer */
     footer {
       text-align: center;
@@ -704,18 +691,6 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             Copiar link
           </button>
-          <button type="button" class="btn btn-secondary" id="shareImageBtn" aria-label="Gerar e copiar imagem">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Gerar imagem
-          </button>
-        </div>
-        <div class="canvas-preview" id="canvasPreview">
-          <img id="previewImg" alt="Imagem de compartilhamento do resultado">
-          <div class="btn-row" style="margin-top:12px">
-            <button type="button" class="btn btn-secondary" id="copyImageBtn">Copiar imagem</button>
-            <button type="button" class="btn btn-secondary" id="downloadImageBtn">Baixar PNG</button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -726,9 +701,6 @@
 
   <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <!-- Off-screen canvas -->
-  <canvas id="shareCanvas" width="1080" height="1080" style="display:none" aria-hidden="true"></canvas>
 
   <script>
     (function () {
@@ -975,203 +947,6 @@
         }).catch(function () {
           showToast('Não foi possível copiar.');
         });
-      });
-
-      // ─── Generate image ───
-      function generateImage() {
-        if (!lastResult) return null;
-
-        var canvas = document.getElementById('shareCanvas');
-        var ctx = canvas.getContext('2d');
-        var w = canvas.width;   // 1080
-        var h = canvas.height;  // 1080
-        var isDark = root.getAttribute('data-theme') === 'dark';
-
-        var bg      = isDark ? '#0a0a0a' : '#fafafa';
-        var surface = isDark ? '#111111' : '#ffffff';
-        var text    = isDark ? '#f5f5f5' : '#0b0b0b';
-        var muted   = isDark ? '#a1a1a1' : '#6b6b6b';
-        var accent  = isDark ? '#ff453a' : '#ff3b30';
-        var accentSoft = isDark ? 'rgba(255,69,58,0.18)' : '#ffe5e3';
-        var divider = isDark ? '#1e1e1e' : '#efefef';
-
-        // ── Background
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, w, h);
-
-        // ── Card
-        var pad = 52;
-        roundRect(ctx, pad, pad, w - pad * 2, h - pad * 2, 40);
-        ctx.fillStyle = surface;
-        ctx.fill();
-        if (!isDark) {
-          ctx.save();
-          ctx.shadowColor = 'rgba(0,0,0,0.07)';
-          ctx.shadowBlur = 40;
-          roundRect(ctx, pad, pad, w - pad * 2, h - pad * 2, 40);
-          ctx.fill();
-          ctx.restore();
-        }
-
-        var cx = w / 2;
-        var cTop = pad; // card top y
-
-        // ── Logo mark (% icon)
-        var lx = pad + 56;
-        var ly = cTop + 66;
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.arc(lx, ly, 13, 0, Math.PI * 2); ctx.stroke();
-        ctx.beginPath(); ctx.arc(lx + 42, ly + 38, 13, 0, Math.PI * 2); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(lx - 12, ly + 50); ctx.lineTo(lx + 54, ly - 12); ctx.stroke();
-
-        // Logo text
-        ctx.fillStyle = text;
-        ctx.font = '700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('Imposto Real', lx + 68, ly + 22);
-
-        // ── Divider
-        ctx.strokeStyle = divider;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(pad + 48, cTop + 134);
-        ctx.lineTo(w - pad - 48, cTop + 134);
-        ctx.stroke();
-
-        // ── Badge pill
-        var badgeLabel = 'OUTRA PERSPECTIVA';
-        ctx.font = '700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.textAlign = 'center';
-        var bw = ctx.measureText(badgeLabel).width + 44;
-        var bx = cx - bw / 2, by = cTop + 172;
-        roundRect(ctx, bx, by, bw, 36, 18);
-        ctx.fillStyle = accentSoft;
-        ctx.fill();
-        ctx.fillStyle = accent;
-        ctx.fillText(badgeLabel, cx, by + 25);
-
-        // ── Hero number
-        var heroStr = lastResult.realPerc.toFixed(1).replace('.', ',') + '%';
-        ctx.font = '800 148px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        var heroW = ctx.measureText(heroStr).width;
-        var heroFontSize = heroW > 780 ? Math.floor(148 * 780 / heroW) : 148;
-        ctx.font = '800 ' + heroFontSize + 'px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = accent;
-        ctx.textAlign = 'center';
-        ctx.fillText(heroStr, cx, cTop + 460);
-
-        // ── Hero label
-        ctx.font = '500 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = muted;
-        ctx.fillText('de imposto sobre o valor real do produto', cx, cTop + 508);
-
-        // ── Divider
-        ctx.strokeStyle = divider;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(pad + 48, cTop + 556);
-        ctx.lineTo(w - pad - 48, cTop + 556);
-        ctx.stroke();
-
-        // ── Comparison bars
-        var barX = pad + 80;
-        var barW = w - pad * 2 - 160;
-        var barH = 14;
-        var barMax = Math.max(lastResult.realPerc, 100);
-
-        // Row 1: Nota fiscal
-        var r1y = cTop + 608;
-        ctx.font = '500 23px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = muted;
-        ctx.textAlign = 'left';
-        ctx.fillText('% informado na nota fiscal', barX, r1y);
-        ctx.font = '700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = text;
-        ctx.textAlign = 'right';
-        ctx.fillText(lastResult.notePerc.toFixed(1).replace('.', ',') + '%', barX + barW, r1y);
-        roundRect(ctx, barX, r1y + 14, barW, barH, 7); ctx.fillStyle = divider; ctx.fill();
-        roundRect(ctx, barX, r1y + 14, barW * Math.min(lastResult.notePerc / barMax, 1), barH, 7);
-        ctx.fillStyle = muted; ctx.fill();
-
-        // Row 2: Real %
-        var r2y = cTop + 716;
-        ctx.font = '500 23px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = muted;
-        ctx.textAlign = 'left';
-        ctx.fillText('Imposto sobre o valor real do produto', barX, r2y);
-        ctx.font = '700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = accent;
-        ctx.textAlign = 'right';
-        ctx.fillText(lastResult.realPerc.toFixed(1).replace('.', ',') + '%', barX + barW, r2y);
-        roundRect(ctx, barX, r2y + 14, barW, barH, 7); ctx.fillStyle = divider; ctx.fill();
-        roundRect(ctx, barX, r2y + 14, barW * Math.min(lastResult.realPerc / barMax, 1), barH, 7);
-        ctx.fillStyle = accent; ctx.fill();
-
-        // ── Footer
-        ctx.font = '400 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = muted;
-        ctx.textAlign = 'center';
-        var footerUrl = window.location.hostname ? window.location.hostname : 'impostoreal';
-        ctx.fillText(footerUrl, cx, h - pad - 36);
-
-        return canvas;
-      }
-
-      function roundRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + w - r, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-        ctx.lineTo(x + w, y + h - r);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        ctx.lineTo(x + r, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-      }
-
-      // ─── Share image button ───
-      var canvasPreview = document.getElementById('canvasPreview');
-      var previewImg = document.getElementById('previewImg');
-
-      document.getElementById('shareImageBtn').addEventListener('click', function () {
-        var canvas = generateImage();
-        if (!canvas) return;
-        var dataURL = canvas.toDataURL('image/png');
-        previewImg.src = dataURL;
-        canvasPreview.style.display = 'block';
-        showToast('Imagem gerada!');
-      });
-
-      // ─── Copy image ───
-      document.getElementById('copyImageBtn').addEventListener('click', function () {
-        var canvas = document.getElementById('shareCanvas');
-        canvas.toBlob(function (blob) {
-          if (!blob) { showToast('Erro ao gerar imagem.'); return; }
-          try {
-            var item = new ClipboardItem({ 'image/png': blob });
-            navigator.clipboard.write([item]).then(function () {
-              showToast('Imagem copiada!');
-            }).catch(function () {
-              showToast('Não foi possível copiar. Use o botão Baixar.');
-            });
-          } catch (e) {
-            showToast('Seu navegador não suporta copiar imagens. Use o botão Baixar.');
-          }
-        }, 'image/png');
-      });
-
-      // ─── Download image ───
-      document.getElementById('downloadImageBtn').addEventListener('click', function () {
-        var canvas = document.getElementById('shareCanvas');
-        var link = document.createElement('a');
-        link.download = 'imposto-real.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast('Imagem baixada!');
       });
 
     })();

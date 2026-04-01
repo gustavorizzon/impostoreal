@@ -70,7 +70,7 @@ perc_nota  = user-provided OR (imposto / total) * 100
    - Secondary stat: valor real do produto
    - Comparison bars: nota fiscal (muted) vs alternativo (accent), animated
 5. **Explanation card** — static educational text, neutral tone
-6. **Share card** — copy link, generate image, copy/download PNG
+6. **Share card** — copy link only
 
 ## Behaviour rules
 
@@ -80,13 +80,6 @@ perc_nota  = user-provided OR (imposto / total) * 100
 - Animate count-up on all numbers (cubic-ease-out, ~900ms)
 - Animate bars (CSS transition `width`, triggered via double `requestAnimationFrame`)
 - Toast: fixed bottom, slides up, auto-dismisses after 2.2s
-
-## Share image (Canvas 1080×1080)
-
-- Drawn entirely with the Canvas 2D API, no external assets
-- Contains: logo mark (drawn SVG-style), badge pill, hero `perc_real`, comparison bars with labels, site URL in footer
-- Colors adapt to current `data-theme`
-- Hero font size auto-scales if the string is too wide
 
 ## Accessibility
 
@@ -99,6 +92,6 @@ perc_nota  = user-provided OR (imposto / total) * 100
 ## Mobile (480px breakpoint)
 
 - Hero number reduces to `64px`
-- Share button row stacks vertically (`flex-direction: column`)
+- Share button is full-width
 - Toast becomes full-width (`calc(100% - 32px)`)
 - Card padding reduces to `20px 16px`
